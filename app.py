@@ -13,8 +13,8 @@ import seaborn as sns
 import networkx as nx
 
 # Import your models
-from best_GCN_model import TemporalGNN, TemporalGAT
-from pyg_datasets import create_edge_index, create_edge_attr
+from train_gnn import TemporalGNN, TemporalGAT
+from convert_to_pyg import create_edge_index, create_edge_attr
 from torch_geometric.data import Data
 
 app = Flask(__name__)
