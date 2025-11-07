@@ -1,0 +1,430 @@
+<!-- File: templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermal Power Plant - Cascade Failure Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 0;
+            min-height: 600px;
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 1px solid #e0e0e0;
+        }
+        
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .control-panel h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .risk-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .risk-high {
+            background: #fee;
+            color: #c00;
+        }
+        
+        .risk-medium {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+        
+        .risk-low {
+            background: #d5f4e6;
+            color: #00b894;
+        }
+        
+        .content-area {
+            padding: 30px;
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .results.active {
+            display: block;
+        }
+        
+        .visualization {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .visualization h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+        
+        .visualization img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .summary-card h4 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .summary-card .value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .placeholder {
+            text-align: center;
+            padding: 100px 20px;
+            color: #999;
+        }
+        
+        .placeholder i {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏭 Thermal Power Plant Monitor</h1>
+            <p>AI-Powered Cascade Failure Prediction System</p>
+        </header>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <div class="control-panel">
+                    <h3>Simulation Controls</h3>
+                    
+                    <div class="form-group">
+                        <label for="initial-failure">Initial Failure Equipment:</label>
+                        <select id="initial-failure">
+                            {% for i, name in enumerate(node_names) %}
+                            <option value="{{ i }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time-steps">Prediction Steps:</label>
+                        <input type="number" id="time-steps" min="3" max="10" value="5">
+                    </div>
+                    
+                    <button class="btn" id="predict-btn">Run Prediction</button>
+                </div>
+                
+                <div class="status-card" id="equipment-status">
+                    <h3 style="margin-bottom: 15px;">Equipment Status</h3>
+                    <div id="status-list">
+                        <p style="text-align: center; color: #999;">Run prediction to see status</p>
+                    </div>
+                </div>
+            </aside>
+            
+            <main class="content-area">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Running AI prediction...</p>
+                </div>
+                
+                <div class="placeholder" id="placeholder">
+                    <div style="font-size: 64px; margin-bottom: 20px;">🔍</div>
+                    <h2>Ready to Predict</h2>
+                    <p>Select initial failure equipment and click "Run Prediction"</p>
+                </div>
+                
+                <div class="results" id="results">
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <h4>Total Failures</h4>
+                            <div class="value" id="total-failures">0</div>
+                        </div>
+                        <div class="summary-card">
+                            <h4>High Risk Equipment</h4>
+                            <div class="value" id="high-risk-count">0</div>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Prediction Steps</h4>
+                            <div class="value" id="prediction-steps">5</div>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h3>Cascade Propagation Timeline</h3>
+                        <img id="cascade-plot" src="" alt="Cascade Plot">
+                    </div>
+                    
+                    <div class="visualization">
+                        <h3>Network Risk Visualization</h3>
+                        <img id="network-plot" src="" alt="Network Plot">
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        const predictBtn = document.getElementById('predict-btn');
+        const loading = document.getElementById('loading');
+        const placeholder = document.getElementById('placeholder');
+        const results = document.getElementById('results');
+        
+        predictBtn.addEventListener('click', async () => {
+            const initFailure = document.getElementById('initial-failure').value;
+            const numSteps = document.getElementById('time-steps').value;
+            
+            // Show loading
+            loading.classList.add('active');
+            placeholder.style.display = 'none';
+            results.classList.remove('active');
+            predictBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        init_failure: parseInt(initFailure),
+                        num_steps: parseInt(numSteps)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update summary cards
+                    document.getElementById('total-failures').textContent = data.summary.total_failures;
+                    document.getElementById('high-risk-count').textContent = data.summary.high_risk_nodes.length;
+                    document.getElementById('prediction-steps').textContent = numSteps;
+                    
+                    // Update plots
+                    document.getElementById('cascade-plot').src = 'data:image/png;base64,' + data.cascade_plot;
+                    document.getElementById('network-plot').src = 'data:image/png;base64,' + data.network_plot;
+                    
+                    // Update equipment status
+                    updateEquipmentStatus(data);
+                    
+                    // Show results
+                    loading.classList.remove('active');
+                    results.classList.add('active');
+                } else {
+                    alert('Prediction failed: ' + data.error);
+                    loading.classList.remove('active');
+                    placeholder.style.display = 'block';
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                loading.classList.remove('active');
+                placeholder.style.display = 'block';
+            } finally {
+                predictBtn.disabled = false;
+            }
+        });
+        
+        function updateEquipmentStatus(data) {
+            const statusList = document.getElementById('status-list');
+            const finalProbs = data.probabilities.map(p => p[p.length - 1]);
+            const nodeNames = data.node_names;
+            
+            let html = '';
+            for (let i = 0; i < nodeNames.length; i++) {
+                const prob = finalProbs[i];
+                let riskClass, riskLabel;
+                
+                if (prob > 0.7) {
+                    riskClass = 'risk-high';
+                    riskLabel = 'High';
+                } else if (prob > 0.4) {
+                    riskClass = 'risk-medium';
+                    riskLabel = 'Medium';
+                } else {
+                    riskClass = 'risk-low';
+                    riskLabel = 'Low';
+                }
+                
+                html += `
+                    <div class="status-item">
+                        <span>${nodeNames[i]}</span>
+                        <span class="risk-badge ${riskClass}">${riskLabel} (${(prob * 100).toFixed(1)}%)</span>
+                    </div>
+                `;
+            }
+            
+            statusList.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
