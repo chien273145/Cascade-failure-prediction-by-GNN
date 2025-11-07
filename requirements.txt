@@ -1,10 +1,22 @@
 # File: requirements.txt
 
-Flask==2.3.0
-torch==2.0.0
-torch-geometric==2.3.0
-numpy==1.24.0
-matplotlib==3.7.0
-seaborn==0.12.0
-networkx==3.1
-scikit-learn==1.3.0
+# Core dependencies (compatible với Python 3.8-3.11)
+Flask>=2.3.0,<4.0.0
+numpy>=1.21.0,<2.0.0
+matplotlib>=3.5.0,<4.0.0
+seaborn>=0.12.0,<1.0.0
+networkx>=2.8.0,<4.0.0
+scikit-learn>=1.0.0,<2.0.0
+
+# PyTorch - version depends on Python version
+# For Python 3.8-3.10
+torch>=2.0.0,<3.0.0; python_version >= '3.8' and python_version < '3.11'
+torchvision>=0.15.0,<1.0.0; python_version >= '3.8' and python_version < '3.11'
+
+# For Python 3.11+
+torch>=2.1.0,<3.0.0; python_version >= '3.11'
+torchvision>=0.16.0,<1.0.0; python_version >= '3.11'
+
+# PyTorch Geometric
+# Note: May need manual installation for Python 3.11+
+torch-geometric>=2.3.0,<3.0.0
